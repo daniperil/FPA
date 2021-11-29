@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 """
-Created on Sun Nov 28 09:46:17 2021
+Created on Sun Nov 28 19:17:50 2021
 
-@author: david
+@author: daniperil
 """
 
 from __future__ import division
@@ -20,7 +21,7 @@ model = ConcreteModel()
 # SETS & PARAMETERS********************************************************************
 numNodes=9
 enegy=20
-polen=10
+visitedNodes = 0
 
 N=RangeSet(0, numNodes)
 
@@ -69,26 +70,17 @@ cost[9,6]=2
 cost[6,9]=1
 
 
-weight={}
-for i in N:
-    weight[i]=0
 
-weight[1]=3
-weight[2]=7
-weight[3]=8
-weight[4]=2
-weight[5]=6
-weight[6]=4
-weight[7]=1
-weight[8]=3
-weight[9]=5
     
 # VARIABLES****************************************************************************
 model.x1 = Var(N,N, domain=Binary)
 
 # OBJECTIVE FUNCTION*******************************************************************
-model.objF1 = Objective(expr = sum(model.x1[i,j]*cost[i,j] for i in N for j in N), sense=minimize)
-model.objF2 = Objective(expr = sum(model.x1[i,j]*weight[i] for i in N for j in N), sense=maximize)
+
+model.objF1 = Objective(expr = sum(model.x1[i,j]*cost[i,j] for i in N for j in N), sense = minimize)
+model.objF0 = Objective(expr = sum(model.x1[i,j] for i in N for j in N), sense = maximize)
+
+
 
 # CONSTRAINTS**************************************************************************
 def source_rule(model,i):
@@ -111,27 +103,25 @@ model.destination=Constraint(N, rule=destination_rule)
 
 def intermediate_rule(model,i):
     if i!=0:
+        
         return sum(model.x1[i,j] for j in N) - sum(model.x1[j,i] for j in N)==0
     else:
         return Constraint.Skip
 
 
 model.intermediate=Constraint(N, rule=intermediate_rule)
-
 model.energy=Constraint(expr= model.objF1<=enegy)
 
-model.polen=Constraint(expr= model.objF2==polen)
 
 # APPLYING THE SOLVER******************************************************************
 
 opt = SolverFactory('glpk')
 model.objF1.deactivate()
-model.objF2.activate()
 results = opt.solve(model) # solves and updates instance
 print('objF1 energía = ',round(value(model.objF1),2))
-print('objF2 polen = ',round(value(model.objF2),2))
+print('objF0 nodos =', (value(model.objF0)) )
 maxOF1=value(model.objF1)
-minOF2=value(model.objF2)
+
 
 model.display()
 """

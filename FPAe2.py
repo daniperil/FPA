@@ -20,7 +20,7 @@ model = ConcreteModel()
 # SETS & PARAMETERS********************************************************************
 numNodes=9
 enegy=20
-polen=10
+polen=30
 
 N=RangeSet(0, numNodes)
 
@@ -128,8 +128,8 @@ opt = SolverFactory('glpk')
 model.objF1.deactivate()
 model.objF2.activate()
 results = opt.solve(model) # solves and updates instance
-print('objF1 energía = ',round(value(model.objF1),2))
-print('objF2 polen = ',round(value(model.objF2),2))
+print('objF1 = ',round(value(model.objF1),2))
+print('objF2 = ',round(value(model.objF2),2))
 maxOF1=value(model.objF1)
 minOF2=value(model.objF2)
 
