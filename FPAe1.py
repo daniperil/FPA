@@ -67,10 +67,6 @@ cost[8,4]=4
 cost[8,6]=1
 
 cost[9,6]=2
-cost[6,9]=1
-
-
-
     
 # VARIABLES****************************************************************************
 model.x1 = Var(N,N, domain=Binary)
@@ -122,36 +118,3 @@ maxOF1=value(model.objF1)
 
 
 model.display()
-"""
-# PLOT GRAPH***************************************************************************
-G = nx.Graph()
-
-G.add_edge(1, 2, weight=cost.get((1,2)))
-G.add_edge(1, 3, weight=2)
-G.add_edge(2, 5, weight=8)
-G.add_edge(3, 4, weight=3)
-G.add_edge(4, 5, weight=2)
-
-red_edges = [(u, v) for (u, v, d) in G.edges(data=True) if d["weight"] > 5]
-black_edges = [(u, v) for (u, v, d) in G.edges(data=True) if d["weight"] <= 5]
-
-pos = nx.spring_layout(G, seed=10)  # positions for all nodes - seed for reproducibility
-
-# nodes
-nx.draw_networkx_nodes(G, pos, node_size=700)
-
-# edges
-nx.draw_networkx_edges(G, pos, edgelist=red_edges, width=6)
-nx.draw_networkx_edges(
-    G, pos, edgelist=black_edges, width=6, alpha=0.5, edge_color="b", style="dashed"
-)
-
-# labels
-nx.draw_networkx_labels(G, pos, font_size=20, font_family="sans-serif")
-
-ax = plt.gca()
-ax.margins(0.08)
-plt.axis("on")
-plt.tight_layout()
-plt.show()    
-"""
